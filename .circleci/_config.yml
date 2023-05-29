@@ -1,8 +1,11 @@
+version: 2.1
 jobs:
   build_and_test: # this can be any name you choose
     executor: python/default # use the default executor defined within the orb
     steps:
       - checkout # checkout source code
+      - python/install-deps
+      - python/test
       - python/install-packages:
           pkg-manager: pip
       - run:
@@ -12,3 +15,7 @@ jobs:
           root: ~/project
           paths:
             - .
+workflows:
+  main:
+    jobs:
+      - build_and_test
