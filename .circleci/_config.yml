@@ -1,21 +1,25 @@
-version: 2.1
+version: '2.1'
+orbs:
+  python: circleci/python@1.5.0
 jobs:
-  build_and_test: # this can be any name you choose
-    executor: python/default # use the default executor defined within the orb
+  build:
+    executor: python/default
     steps:
-      - checkout # checkout source code
-      - python/install-deps
-      - python/test
+      - checkout
       - python/install-packages:
           pkg-manager: pip
+      - python/install-packages:
+          pip-dependency-file: requirements.txt
+          pkg-manager: pip
+      - python/install-packages:
+          args: pytest
+          pkg-manager: pip
+          pypi-cache: false
       - run:
-          name: Run tests
-          command: python -m pytest
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - .
+          command: |
+            pytest --version
+          name: Test
 workflows:
   main:
     jobs:
-      - build_and_test
+      - build
